@@ -25,7 +25,8 @@ http {
     image/svg+xml;
 
   server {
-    listen 80;
+    # Dockerfile EXPOSE / HEALTHCHECK and the compose port map all use 8080.
+    listen 8080;
     server_name _;
 
     root /usr/share/nginx/html;
@@ -94,7 +95,9 @@ http {
         add_header Content-Length 0;
         return 204;
       }
-      proxy_pass ${API_UPSTREAM};
+      # envsubst replaces this with LOCAL_API_PORT (Node sidecar port); the
+      # old ${API_UPSTREAM} placeholder was never substituted by entrypoint.sh.
+      proxy_pass http://127.0.0.1:${LOCAL_API_PORT};
       proxy_http_version 1.1;
       proxy_set_header Host $proxy_host;
       proxy_set_header X-Real-IP $remote_addr;

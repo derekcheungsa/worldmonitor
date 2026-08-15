@@ -94,7 +94,10 @@ async function readBody(req) {
   return Buffer.concat(chunks).toString();
 }
 
-const server = http.createServer(async (req, res) => {
+// maxHeaderSize covers the request line too: the app's setCachedJson() sends
+// path-based POSTs (/set/<key>/<json>/EX/<ttl>) whose URL can far exceed
+// node's 16KB default → HTTP 431 and dropped writes.
+const server = http.createServer({ maxHeaderSize: 8 * 1024 * 1024 }, async (req, res) => {
   res.setHeader('content-type', 'application/json');
 
   if (!checkAuth(req)) {
