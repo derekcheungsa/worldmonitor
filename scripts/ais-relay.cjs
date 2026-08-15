@@ -85,7 +85,9 @@ const AISSTREAM_URL = RELAY_TEST_MODE && process.env.AISSTREAM_URL
   ? process.env.AISSTREAM_URL
   : 'wss://stream.aisstream.io/v0/stream';
 const API_KEY = process.env.AISSTREAM_API_KEY || process.env.VITE_AISSTREAM_API_KEY;
-const PORT = process.env.PORT || 3004;
+// RELAY_PORT wins over PORT so Railway's runtime-injected PORT (8080) can't
+// silently move the relay off the port sibling services expect (3004).
+const PORT = process.env.RELAY_PORT || process.env.PORT || 3004;
 // Actual bound port, resolved at listen time. Self-requests must use this:
 // with PORT=0 (ephemeral bind, used by tests) the env value is not the port
 // the server listens on, and `http://localhost:0` fails outright.

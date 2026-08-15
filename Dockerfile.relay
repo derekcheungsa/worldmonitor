@@ -96,6 +96,16 @@ COPY shared/ ./shared/
 # Data files required by the relay (telegram-channels.json, etc.)
 COPY data/ ./data/
 
+# RELAY_PORT pins the listen port (Railway injects PORT=8080 into every service
+# at runtime, which would otherwise override a PORT-based default).
+# UPSTASH_ALLOW_INSECURE_HTTP lets the seed loops talk to a plain-HTTP
+# Upstash-compatible proxy (docker/redis-rest-proxy.mjs); harmless otherwise.
+# UPSTASH_REDIS_REST_URL defaults to the Railway private-network proxy so bare
+# template deploys seed without manual env wiring (compose overrides it).
+ENV RELAY_PORT=3004 \
+    UPSTASH_ALLOW_INSECURE_HTTP=true \
+    UPSTASH_REDIS_REST_URL=http://redis-rest.railway.internal:80
+
 EXPOSE 3004
 
 # Use 127.0.0.1, not localhost: localhost resolves to ::1 first, but the relay

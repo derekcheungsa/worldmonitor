@@ -2,5 +2,8 @@ FROM node:24-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432
 WORKDIR /app
 RUN npm init -y && npm install redis@4
 COPY redis-rest-proxy.mjs .
+# SRH_PORT pins the listen port: Railway injects PORT=8080 into every service
+# at runtime, which would otherwise override a PORT-based default.
+ENV SRH_PORT=80
 EXPOSE 80
 CMD ["node", "redis-rest-proxy.mjs"]

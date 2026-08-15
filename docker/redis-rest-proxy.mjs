@@ -21,7 +21,9 @@ import { createClient } from 'redis';
 
 const REDIS_URL = process.env.SRH_CONNECTION_STRING || process.env.REDIS_URL || 'redis://redis:6379';
 const TOKEN = process.env.SRH_TOKEN || '';
-const PORT = parseInt(process.env.PORT || '80', 10);
+// SRH_PORT wins over PORT so Railway's runtime-injected PORT (8080) can't
+// silently move the proxy off the port sibling services expect (80).
+const PORT = parseInt(process.env.SRH_PORT || process.env.PORT || '80', 10);
 
 // Redact userinfo before a connection string ever reaches stdout — REDIS_URL
 // carries the Redis password (SRH_CONNECTION_STRING: redis://:<password>@host:port)
