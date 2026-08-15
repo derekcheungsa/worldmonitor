@@ -11,7 +11,7 @@
  *
  * Env:
  *   REDIS_URL  - Redis connection string (default: redis://redis:6379)
- *   SRH_TOKEN  - Bearer token for auth (default: none)
+ *   WM_REDIS_TOKEN / SRH_TOKEN  - Bearer token for auth (default: none)
  *   PORT       - Listen port (default: 80)
  */
 
@@ -20,7 +20,10 @@ import crypto from 'node:crypto';
 import { createClient } from 'redis';
 
 const REDIS_URL = process.env.SRH_CONNECTION_STRING || process.env.REDIS_URL || 'redis://redis:6379';
-const TOKEN = process.env.SRH_TOKEN || '';
+// WM_REDIS_TOKEN is the canonical name shared with the app/relay services
+// (UPSTASH_REDIS_REST_TOKEN) so a template can generate ONE secret and
+// reference it everywhere. SRH_TOKEN stays as the docker-compose name.
+const TOKEN = process.env.WM_REDIS_TOKEN || process.env.SRH_TOKEN || '';
 // SRH_PORT wins over PORT so Railway's runtime-injected PORT (8080) can't
 // silently move the proxy off the port sibling services expect (80).
 const PORT = parseInt(process.env.SRH_PORT || process.env.PORT || '80', 10);
